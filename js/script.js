@@ -1,27 +1,27 @@
 // Sample data representing sales leaks
-const leaksData = [
+let leaksData = [
   {
     name: "Silent Phone",
-    triggerValue: 10, // percentage
-    actualValue: 22.58, // percentage
+    triggerValue: 10,
+    actualValue: 22.58,
     notes: "Leads not contacted",
-    revenueImpact: 21397, // £
+    revenueImpact: 21397,
     paymentStatus: "Pending"
   },
   {
     name: "Ghosting Peak",
-    triggerValue: 15, // percentage
-    actualValue: 8.70, // percentage
+    triggerValue: 15,
+    actualValue: 8.70,
     notes: "Consult no-shows",
-    revenueImpact: 6113, // £
+    revenueImpact: 6113,
     paymentStatus: "Pending"
   },
   {
     name: "Treatment Completion",
-    triggerValue: 15, // percentage
-    actualValue: 71.43, // percentage
+    triggerValue: 15,
+    actualValue: 71.43,
     notes: "Started but not finished",
-    revenueImpact: 45850, // £
+    revenueImpact: 45850,
     paymentStatus: "Pending"
   }
 ];
@@ -51,5 +51,46 @@ function displayLeaks() {
   });
 }
 
-// Call the function to display leaks on page load
+// Add new leak from the form
+function addLeak(event) {
+  event.preventDefault(); // Prevent form submission
+
+  const name = document.getElementById("leakName").value;
+  const triggerValue = parseFloat(document.getElementById("triggerValue").value);
+  const actualValue = parseFloat(document.getElementById("actualValue").value);
+  const revenueImpact = parseFloat(document.getElementById("revenueImpact").value);
+  const notes = document.getElementById("notes").value;
+
+  const newLeak = {
+    name,
+    triggerValue,
+    actualValue,
+    notes,
+    revenueImpact,
+    paymentStatus: "Pending"
+  };
+
+  leaksData.push(newLeak);  // Add the new leak to the array
+  displayLeaks();  // Re-render the leaks table
+  document.getElementById("add-leak-form").reset();  // Reset form
+}
+
+// Sorting leaks by revenue or trigger value
+function sortLeaks(criteria) {
+  if (criteria === 'revenue') {
+    leaksData.sort((a, b) => b.revenueImpact - a.revenueImpact);
+  } else if (criteria === 'trigger') {
+    leaksData.sort((a, b) => b.triggerValue - a.triggerValue);
+  }
+  displayLeaks();  // Re-render the sorted table
+}
+
+// Filtering leaks to show only ALERTS
+function filterLeaks() {
+  const filteredLeaks = leaksData.filter(leak => leak.actualValue > leak.triggerValue);
+  leaksData = filteredLeaks;  // Update leaks data with filtered leaks
+  displayLeaks();  // Re-render the table
+}
+
+// Initial call to display leaks on page load
 displayLeaks();
